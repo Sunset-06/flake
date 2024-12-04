@@ -12,19 +12,20 @@
 #define FONTSET_SIZE 80
 
 extern uint8_t memory[4096];
-extern uint16_t stack[16];
-extern uint8_t sp;
+extern uint32_t screen[64 * 32];
 extern uint16_t pc;
-extern uint16_t opcode;
+extern uint16_t I;
+extern uint16_t stack[16];
 extern uint8_t delayTimer;
 extern uint8_t soundTimer;
-extern uint16_t I;
 extern unsigned int registers[16];
+
+extern uint8_t sp;
+extern uint16_t opcode;
 extern uint8_t keypad[16];
-extern uint32_t screen[64 * 32];
 extern uint8_t fontset[FONTSET_SIZE];
 
-
+/* 
 // Function prototypes
 void fetch();
 void operate();
@@ -33,5 +34,5 @@ void LoadRom(char filename[]);
 void drawScreen();
 void initializeSDL();
 void endSDL();
-
+ */
 #endif 
