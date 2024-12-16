@@ -25,15 +25,13 @@ extern uint8_t soundTimer;
 extern uint16_t opcode;
 extern uint8_t keypad[16];
 
-
-void LoadRom(char filename[]);
 //SDL functions
-void initializeSDL();
+void initializeScreen();
 void drawScreen();
-void endSDL();
-/* 
-void fetch();
+void endScreen();
+//emulator functions
+void init_emu();
+void LoadRom(char filename[]);
 void execute();
-void CPUCycle();
- */
+void run_operation();
 #endif 
