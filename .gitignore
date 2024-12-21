@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Test Roms and Binary
+flag_test.ch8
+ibm_test.ch8
+keypad_test.ch8
+logo_test.ch8
+opcode_test.ch8
+timer_test.ch8
+flake

@@ -23,7 +23,7 @@ extern uint32_t screen[64 * 32];
 extern uint8_t delayTimer;
 extern uint8_t soundTimer;  
 extern uint16_t opcode;
-extern uint8_t keypad[16];
+extern SDL_Scancode keymappings[16];
 
 //SDL functions
 void initializeScreen();

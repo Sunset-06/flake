@@ -28,22 +28,5 @@
             },
             "detail": "Build task for all source files."
         },
-        {
-            "label": "Run the Emulator",
-            "type": "shell",
-            "command": "${workspaceFolder}/flake",
-            "args": [
-                "${workspaceFolder}/roms/test_opcode.ch8"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [],
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "detail": "Run task for the Chip8 Emulator with the specified ROM."
-        }
     ]
 }

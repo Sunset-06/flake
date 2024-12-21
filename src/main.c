@@ -36,8 +36,35 @@ int main(int argc, char** argv) {
     initializeScreen();
     char* inputRom = argv[1];
     LoadRom(inputRom);
+    int quit_flag=0;
+    unsigned char curr_key_state[16] = {0};
+    SDL_Event event;
+
     //main loop
-    while(true){
+    while(!quit_flag){
+        //handling keypresses
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT)
+                quit_flag = 1; 
+            
+            const Uint8* state = SDL_GetKeyboardState(NULL);
+            if (state[SDL_SCANCODE_BACKSPACE]) {
+                quit_flag = 1;
+            }
+
+            for (int keycode = 0; keycode < 16; keycode++) {
+                curr_key_state[keycode] = state[keymappings[keycode]] ? 1 : 0;  // 1 if pressed, 0 if not
+            }
+        }
+
+        //handling the timers
+        if (delayTimer > 0) {
+            --delayTimer;
+        }
+        if (soundTimer > 0) {
+            --soundTimer;
+        }
+        //finally, executing the instructions
         execute();
         drawScreen();
         SDL_Delay(16); 

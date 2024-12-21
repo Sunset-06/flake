@@ -182,26 +182,26 @@ void run_operation()
             break;
         }
         
-        /* case 0xE000:
+        case 0xE000:
             switch (opcode & 0x00FFu)
             {
                 // 0xEX9E: Skip next instruction if key with the value of Vx is pressed
                 case 0x009E:
-                    if (keypad[registers[secondNibble]])
+                    if (keymappings[registers[secondNibble]])
                     {
                         pc += 2;
                     }
                     break;
                 // 0xEXA1: Skip next instruction if key with the value of Vx is not pressed
                 case 0x00A1:
-                    if (!keypad[registers[secondNibble]])
+                    if (!keymappings[registers[secondNibble]])
                     {
                         pc += 2;
                     }
                     break;
             }
             break;
-         */
+
         case 0xF000:
             switch (opcode & 0x00FFu)
             {
@@ -210,12 +210,12 @@ void run_operation()
                     registers[secondNibble] = delayTimer;
                     break;
                 // 0xFX0A: Wait for a key press, store the value of the key in Vx
-                /* case 0x000A:
+                case 0x000A:
                 {
                     bool keyPressed = false;
                     for (uint8_t i = 0; i < 16; ++i)
                     {
-                        if (keypad[i])
+                        if (keymappings[i])
                         {
                             registers[secondNibble] = i;
                             keyPressed = true;
@@ -227,7 +227,7 @@ void run_operation()
                         pc -= 2;
                     }
                     break;
-                } */
+                }
                 // 0xFX15: Set delay timer = Vx
                 case 0x0015:
                     delayTimer = registers[secondNibble];
@@ -266,5 +266,8 @@ void run_operation()
                     break;
             }
             break;
+        default:
+            printf("Error: Unknown opcode 0x%04X \n", opcode);
+            exit(1); 
     }
 }

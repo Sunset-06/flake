@@ -2,7 +2,7 @@
 
 This is a Chip 8 interpreter written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
 
-I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code  as itisthe first emulator I have written and also the first time I have used SDL2. The file structure might be a bit messy as of now, but all the necessary components are declared in one header file, so they should be easy to keep track of.
+I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code  as it is the first emulator I have written and also the first time I have used SDL2. The file structure might be a bit messy as of now, but all the necessary components are declared in one header file, so they should be easy to keep track of.
 
 ## How to get it to work
 
@@ -35,9 +35,9 @@ There is also a preconfigured task for VSCode  in the `.vscode/tasks.json` file 
 
 There are still some things left to do for this,
 1. Add keypad support (You cannot input anything in its current state!)
-2. Implement theinstructions that require the keypad
+2. Implement the instructions that require the keypad
 3. Implement the timers!
-4. Improve the VSCode tasks.
+4. Fix the remaining instructions!
 
 ## Credits
 
@@ -52,5 +52,7 @@ However, The random old reddit threads that explained to me what terminals origi
 [Leonardo Folgoni's Implementation of the Emulator](https://github.com/f0lg0/CHIP-8)
 
 The roms provided in the directory in this repo were obtained from [Kripod's repository](https://github.com/kripod/chip8-roms) where there are lots more!
+
+The test roms were obtained from [chip8-test-suite](https://github.com/Timendus/chip8-test-suite). These helped me out a lot, so i won't be including them in my roms folder, please check the original repository out!
 
 Feel free to use the contents of the repository as you wish.
