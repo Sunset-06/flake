@@ -14,7 +14,7 @@
 extern uint8_t memory[4096];
 extern uint16_t pc;
 extern uint16_t I;
-extern unsigned int registers[16];
+extern uint8_t registers[16];
 extern uint16_t stack[16];
 extern uint8_t sp;
 extern uint8_t fontset[FONTSET_SIZE];

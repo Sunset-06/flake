@@ -3,7 +3,7 @@
 uint8_t memory[4096]={0};
 uint16_t pc = START_ADDRESS;
 uint16_t I = 0;
-unsigned int registers[16] = {0};
+uint8_t registers[16] = {0};
 uint16_t stack[16] = {0};
 uint8_t sp=0    ;
 unsigned char fontset[80] = {
