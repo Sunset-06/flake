@@ -1,6 +1,6 @@
 # flake
 
-This is a Chip 8 interpreter written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
+This is a Chip 8 interpreter/emulator written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
 
 I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code  as it is the first emulator I have written and also the first time I have used SDL2. The file structure might be a bit messy as of now, but all the necessary components are declared in one header file, so they should be easy to keep track of.
 

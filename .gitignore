@@ -59,3 +59,4 @@ logo_test.ch8
 opcode_test.ch8
 timer_test.ch8
 flake
+roms/*

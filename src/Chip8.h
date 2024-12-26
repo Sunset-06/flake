@@ -24,13 +24,15 @@ extern uint8_t delayTimer;
 extern uint8_t soundTimer;  
 extern uint16_t opcode;
 extern SDL_Scancode keymappings[16];
+extern uint8_t curr_key_state[16];
+extern uint8_t quit_flag;
 
 //SDL functions
 void initializeScreen();
 void drawScreen();
 void endScreen();
+void handle_keypress();
 //emulator functions
-void init_emu();
 void LoadRom(char filename[]);
 void execute();
 void run_operation();

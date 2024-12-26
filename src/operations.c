@@ -14,6 +14,7 @@ uint8_t carry;
 // All codes that start with 0, 8, E, or F require nested statements.
 void run_operation()
 {
+    printf("Opcode executed: %4X\n",opcode);
     uint8_t secondNibble = (opcode & 0x0F00u) >> 8u;
     uint8_t thirdNibble = (opcode & 0x00F0u) >> 4u;
     uint8_t fourthNibble = opcode & 0x000Fu;
@@ -77,9 +78,9 @@ void run_operation()
         
         // 0x7xkk: Set Vx += kk
         case 0x7000:
-            printf("Current Vx:%X\nCurrent kk:%2X\n",registers[secondNibble],(opcode & 0x00FFu));
+            //printf("Current Vx:%X\nCurrent kk:%2X\n",registers[secondNibble],(opcode & 0x00FFu));
             registers[secondNibble] += (opcode & 0x00FFu);
-            printf("Changed Vx:%X\n",registers[secondNibble]);  
+            //printf("Changed Vx:%X\n",registers[secondNibble]);  
             break;
         
         // 0x8xy_
@@ -106,23 +107,25 @@ void run_operation()
                 case 0x0004:
                 {
                     uint16_t sum = registers[secondNibble] + registers[thirdNibble];
-                    registers[0xF] = (sum > 255U) ? 1 : 0;
+                    carry = (sum > 255U) ? 1 : 0;
                     registers[secondNibble] = sum & 0xFFu;
+                    registers[0xF] =carry;  
                     break;
                 }
                 // 0x8xy5: Set Vx -= Vy, set VF = NOT borrow
                 case 0x0005:
-                    printf("opcode: %04X\n", opcode);
-                    printf("Second nibble:%X\nThird nibble:%X\nFourth nibble:%X\n\n\n",secondNibble,thirdNibble,fourthNibble);
+                    //printf("opcode: %04X\n", opcode);
+                    //printf("Second nibble:%X\nThird nibble:%X\nFourth nibble:%X\n\n\n",secondNibble,thirdNibble,fourthNibble);
                     carry = (registers[secondNibble] >= registers[thirdNibble]) ? 1 : 0;
-                    printf("Carry: %X\n",carry);
+                    //printf("Carry: %X\n",carry);
                     registers[secondNibble] -= registers[thirdNibble];
                     registers[0xF] = carry;
                     break;
                 // 0x8xy6: Shift Vx right by 1
                 case 0x0006:
-                    registers[0xF] = registers[secondNibble] & 0x1u;
+                    carry = registers[secondNibble] & 0x1u;
                     registers[secondNibble] >>= 1;
+                    registers[0xF] = carry;
                     break;
                 // 0x8xy7: Set Vx = Vy - Vx, set VF = NOT borrow
                 case 0x0007:
@@ -132,8 +135,9 @@ void run_operation()
                     break;
                 // 0x8xyE: Shift Vx left by 1
                 case 0x000E:
-                    registers[0xF] = (registers[secondNibble] & 0x80u) >> 7u;
+                    carry = (registers[secondNibble] & 0x80u) >> 7u;
                     registers[secondNibble] <<= 1;
+                    registers[0xF] = carry;
                     break;
             }
             break;
@@ -195,14 +199,14 @@ void run_operation()
             {
                 // 0xEX9E: Skip next instruction if key with the value of Vx is pressed
                 case 0x009E:
-                    if (keymappings[registers[secondNibble]])
+                    if (curr_key_state[registers[secondNibble]])
                     {
                         pc += 2;
                     }
                     break;
                 // 0xEXA1: Skip next instruction if key with the value of Vx is not pressed
                 case 0x00A1:
-                    if (!keymappings[registers[secondNibble]])
+                    if (!curr_key_state[registers[secondNibble]])
                     {
                         pc += 2;
                     }
@@ -223,7 +227,7 @@ void run_operation()
                     bool keyPressed = false;
                     for (uint8_t i = 0; i < 16; ++i)
                     {
-                        if (keymappings[i])
+                        if (curr_key_state[i])
                         {
                             registers[secondNibble] = i;
                             keyPressed = true;
