@@ -14,7 +14,7 @@ uint8_t carry;
 // All codes that start with 0, 8, E, or F require nested statements.
 void run_operation()
 {
-    printf("Opcode executed: %4X\n",opcode);
+    //printf("Opcode executed: %4X\n",opcode);
     uint8_t secondNibble = (opcode & 0x0F00u) >> 8u;
     uint8_t thirdNibble = (opcode & 0x00F0u) >> 4u;
     uint8_t fourthNibble = opcode & 0x000Fu;

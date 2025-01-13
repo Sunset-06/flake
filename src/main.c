@@ -38,29 +38,31 @@ int main(int argc, char** argv) {
     initializeScreen();
     char* inputRom = argv[1];
     LoadRom(inputRom);
-    SDL_Event event;
+    uint32_t lastTimerUpdate = SDL_GetTicks();
 
     //main loop
     while(!quit_flag){
         //handling keypresses
-        
+        handle_keypress();
 
-        /* //handling the timers
-        if (delayTimer > 0) {
-            --delayTimer;
+        uint32_t currentTicks = SDL_GetTicks();
+        if (currentTicks - lastTimerUpdate >= 1000 / 60) { 
+            if (delayTimer > 0) {
+                --delayTimer;
+            }
+            if (soundTimer > 0) {
+                --soundTimer;
+            }
+            lastTimerUpdate = currentTicks;
+            if (soundTimer == 0) {
+                // **BEEP logic**
+            }
         }
-        if (soundTimer > 0) {
-            --soundTimer;
-        } 
-        if  (soundTimer==0){
-            **BEEP logic**
-        }*/
 
         //finally, executing the instructions
-        handle_keypress();
         execute();
         drawScreen();
-        //SDL_Delay(16); 
+        SDL_Delay(1); 
     }
 
     endScreen();

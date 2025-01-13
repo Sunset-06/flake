@@ -6,10 +6,10 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
  SDL_Scancode keymappings[16] = {
-    SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4,
-    SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_R,
-    SDL_SCANCODE_A, SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_F,
-    SDL_SCANCODE_Z, SDL_SCANCODE_X, SDL_SCANCODE_C, SDL_SCANCODE_V
+    SDL_SCANCODE_X, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3,
+    SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_A,
+    SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_Z, SDL_SCANCODE_C,
+    SDL_SCANCODE_4, SDL_SCANCODE_R, SDL_SCANCODE_F, SDL_SCANCODE_V
 };
 
 //Handles keypresses
@@ -30,8 +30,8 @@ void handle_keypress() {
 
                 for (int i= 0;i < 16; i++) {
                     curr_key_state[i] = state[keymappings[i]];
+                    //printf("%d is %d \n",i,curr_key_state[i]);
                 }
-
                 break;
         }
     }
