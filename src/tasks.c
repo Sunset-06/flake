@@ -30,7 +30,6 @@ void handle_keypress() {
 
                 for (int i= 0;i < 16; i++) {
                     curr_key_state[i] = state[keymappings[i]];
-                    //printf("%d is %d \n",i,curr_key_state[i]);
                 }
                 break;
         }

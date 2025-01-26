@@ -14,7 +14,6 @@ uint8_t carry;
 // All codes that start with 0, 8, E, or F require nested statements.
 void run_operation()
 {
-    //printf("Opcode executed: %4X\n",opcode);
     uint8_t secondNibble = (opcode & 0x0F00u) >> 8u;
     uint8_t thirdNibble = (opcode & 0x00F0u) >> 4u;
     uint8_t fourthNibble = opcode & 0x000Fu;
@@ -78,9 +77,7 @@ void run_operation()
         
         // 0x7xkk: Set Vx += kk
         case 0x7000:
-            //printf("Current Vx:%X\nCurrent kk:%2X\n",registers[secondNibble],(opcode & 0x00FFu));
             registers[secondNibble] += (opcode & 0x00FFu);
-            //printf("Changed Vx:%X\n",registers[secondNibble]);  
             break;
         
         // 0x8xy_
@@ -114,10 +111,7 @@ void run_operation()
                 }
                 // 0x8xy5: Set Vx -= Vy, set VF = NOT borrow
                 case 0x0005:
-                    //printf("opcode: %04X\n", opcode);
-                    //printf("Second nibble:%X\nThird nibble:%X\nFourth nibble:%X\n\n\n",secondNibble,thirdNibble,fourthNibble);
                     carry = (registers[secondNibble] >= registers[thirdNibble]) ? 1 : 0;
-                    //printf("Carry: %X\n",carry);
                     registers[secondNibble] -= registers[thirdNibble];
                     registers[0xF] = carry;
                     break;
