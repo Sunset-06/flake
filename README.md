@@ -28,16 +28,19 @@ For Example:
 
   ./flake path/to/your/rom.ch8 #To execute
 ```
+**Alternatively, use the MakeFile provided to compile the project.**
 
-There is also a preconfigured task for VSCode  in the `.vscode/tasks.json` file to make things easier if you use VSCode!
+```bash
+  make build #To compile
+
+  ./flake path/to/your/rom.ch8 #To execute
+```
 
 ## Work left
 
-There are still some things left to do for this,
-1. Add keypad support (You cannot input anything in its current state!)
-2. Implement the instructions that require the keypad
-3. Implement the timers!
-4. Fix the remaining instructions!
+This project is fully functioning! Everything works, except for sound.
+
+If you do need to change the timer, Change the value of ```SDL_Delay(1)``` in the main emulation loop.
 
 ## Credits
 
