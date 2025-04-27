@@ -21,7 +21,7 @@ extern uint8_t sp;
 extern uint8_t fontset[FONTSET_SIZE];
 
 extern uint32_t screen[64 * 32];
-extern uint8_t beepBuffer[44100];
+extern uint8_t beepBuffer[735];
 extern uint8_t delayTimer;
 extern uint8_t soundTimer;  
 extern uint16_t opcode;

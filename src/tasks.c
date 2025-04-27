@@ -1,7 +1,7 @@
 #include"Chip8.h"
 
 uint32_t screen[SCREEN_WIDTH * SCREEN_HEIGHT];
-unsigned char beepBuffer[44100];
+unsigned char beepBuffer[735];
 
 
 SDL_Window* window = NULL;
@@ -87,14 +87,14 @@ void initializeSound() {
     }
 
     // square wave - goes beep
-    for (int i = 0; i < 44100; ++i) {
+    for (int i = 0; i < 735; ++i) {
         beepBuffer[i] = (i / 100) % 2 ? 255 : 0;
     }
 }
 
 // starts the beep wave
 void beep() {
-    if (soundTimer > 0 && SDL_GetQueuedAudioSize(audioDevice) == 0) {
+    if (soundTimer > 0) {
         SDL_QueueAudio(audioDevice, beepBuffer, sizeof(beepBuffer));
         SDL_PauseAudioDevice(audioDevice, 0);
     }
