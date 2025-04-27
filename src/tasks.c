@@ -1,6 +1,8 @@
 #include"Chip8.h"
 
 uint32_t screen[SCREEN_WIDTH * SCREEN_HEIGHT];
+unsigned char beepBuffer[44100];
+
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
@@ -11,6 +13,10 @@ SDL_Renderer* renderer = NULL;
     SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_Z, SDL_SCANCODE_C,
     SDL_SCANCODE_4, SDL_SCANCODE_R, SDL_SCANCODE_F, SDL_SCANCODE_V
 };
+
+SDL_AudioDeviceID audioDevice;
+SDL_AudioSpec want, have;
+
 
 //Handles keypresses
 void handle_keypress() {
@@ -64,9 +70,46 @@ void drawScreen() {
     SDL_RenderPresent(renderer);
 }
 
+//init for the sounds
+void initializeSound() {
+    SDL_Init(SDL_INIT_AUDIO);
+    SDL_memset(&want, 0, sizeof(want));
+    want.freq = 44100;
+    want.format = AUDIO_U8;
+    want.channels = 1;
+    want.samples = 4096;
+    want.callback = NULL;
+
+    audioDevice = SDL_OpenAudioDevice(NULL, 0, &want, &have, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+    if (audioDevice == 0) {
+        fprintf(stderr, "Failed to open audio: %s\n", SDL_GetError());
+        return;
+    }
+
+    // square wave - goes beep
+    for (int i = 0; i < 44100; ++i) {
+        beepBuffer[i] = (i / 100) % 2 ? 255 : 0;
+    }
+}
+
+// starts the beep wave
+void beep() {
+    if (soundTimer > 0 && SDL_GetQueuedAudioSize(audioDevice) == 0) {
+        SDL_QueueAudio(audioDevice, beepBuffer, sizeof(beepBuffer));
+        SDL_PauseAudioDevice(audioDevice, 0);
+    }
+}
+//stops the beep wave
+void stopBeep() {
+    SDL_ClearQueuedAudio(audioDevice);
+    SDL_PauseAudioDevice(audioDevice, 1);
+}
+
+
 //stop the emu
 void endScreen(){
     SDL_DestroyRenderer(renderer);
+    SDL_CloseAudioDevice(audioDevice);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }

@@ -10,6 +10,7 @@
 #define START_ADDRESS 0x200
 #define FONTSET_START_ADDRESS 0x50
 #define FONTSET_SIZE 80
+#define CPU_FREQ 60
 
 extern uint8_t memory[4096];
 extern uint16_t pc;
@@ -20,6 +21,7 @@ extern uint8_t sp;
 extern uint8_t fontset[FONTSET_SIZE];
 
 extern uint32_t screen[64 * 32];
+extern uint8_t beepBuffer[44100];
 extern uint8_t delayTimer;
 extern uint8_t soundTimer;  
 extern uint16_t opcode;
@@ -29,9 +31,12 @@ extern uint8_t quit_flag;
 
 //SDL functions
 void initializeScreen();
+void initializeSound();
 void drawScreen();
 void endScreen();
 void handle_keypress();
+void beep();
+void stopBeep();
 //emulator functions
 void LoadRom(char filename[]);
 void execute();
