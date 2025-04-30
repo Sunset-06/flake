@@ -1,24 +1,19 @@
 # flake
 
-This is a Chip 8 interpreter/emulator written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
+This is a lightweight Chip 8 interpreter/emulator written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
 
-I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code  as it is the first emulator I have written and also the first time I have used SDL2. The file structure might be a bit messy as of now, but all the necessary components are declared in one header file, so they should be easy to keep track of.
+I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code. This is the first C project and there might be a few deviations from standard practices, so I apologize f
 
 ## How to get it to work
 
 ### There are two prerequisites:
 1. GCC
 2. SDL2
- 
-Once you have these installed in your system, you should be good to go!
 
 ### Compiling:
-In its current state the interpreter is rough, and does require you to compile it (This is definitely something that will be updated later)
-For now, follow the instructions below:
-
 (This was done in a linux environment originally, but these instructions should still work for windows as long as you have all the prerequisites.)
 
-First, Compile the four files in the src directory. Once done, pass the path to the rom as an argument when running the program. Thats it!
+First, Compile the four files in the src directory. Once done, pass the path to the rom as an argument when running the program.
 
 **Note: the -lSDL2 flag needs to be present when compiling for it to work.**
 
@@ -31,22 +26,33 @@ For Example:
 **Alternatively, use the MakeFile provided to compile the project.**
 
 ```bash
-  make build #To compile
+  make #To compile
 
   ./flake path/to/your/rom.ch8 #To execute
 ```
 
+Currently the CPU speed is fixed to 950 Hz. In case this does not behave well with the rom you want to run, You need to change this to your desired frequency and recompile.
+
+```C
+// in main.c at line 32
+int CPU_HZ = 950;
+```
+950 works for most modern games, but older games might have trouble running this. For example, this was too fast for Pong.
+
 ## Work left
 
-This project is fully functioning! Everything works, except for sound.
+This project is fully functioning! Everything works now!
+The previous commits had me adding a variable for CPU frequency and functions for sound. 
 
-If you do need to change the timer, Change the value of ```SDL_Delay(1)``` in the main emulation loop.
+Now that the emulator is done, I want to make a UI to allow people to load roms, change colours and maybe even change what waveform plays when the sound timers are on (currently it plays a square wave).
+
+I'm not sure when this will be done, or what I would be using to implement it, but it definitely is being worked on. Until then, you will have to use a cli to run roms.
 
 ## Credits
 
 This project was done mostly to understand CPU architecture and lower level programming better, and some of the resources i used were very useful. 
 
-However, The random old reddit threads that explained to me what terminals originally were, and the NAND2Tetris course that got me comfortable with circuits and bitwise operations, are too varied and fragmented to list. So here are the sources I used for specific Chip8 knowledge. I recommend you check those out if you want to explore further too.
+However, The random old reddit threads that explained to me most things are too varied and fragmented to list. So here are the sources I used for specific Chip8 knowledge. I recommend you check those out if you want to explore further too.
 
 [Cowgod's Chip8 Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
 
@@ -54,8 +60,8 @@ However, The random old reddit threads that explained to me what terminals origi
 
 [Leonardo Folgoni's Implementation of the Emulator](https://github.com/f0lg0/CHIP-8)
 
-The roms provided in the directory in this repo were obtained from [Kripod's repository](https://github.com/kripod/chip8-roms) where there are lots more!
+The roms I used to test games were obtained from [The Chip8 Archive](https://johnearnest.github.io/chip8Archive/) and [Kripod's repository](https://github.com/kripod/chip8-roms) where there are lots more!
 
-The test roms were obtained from [chip8-test-suite](https://github.com/Timendus/chip8-test-suite). These helped me out a lot, so i won't be including them in my roms folder, please check the original repository out!
+The roms for testing specific modules were obtained from [chip8-test-suite](https://github.com/Timendus/chip8-test-suite). These helped me out a lot, please check the original repository out!
 
-Feel free to use the contents of the repository as you wish.
+Feel free to use the contents of this repository as you wish. [MIT LICENSE](https://github.com/Sunset-06/flake/blob/main/LICENSE)
