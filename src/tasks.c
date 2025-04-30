@@ -1,4 +1,18 @@
+//For the UI
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_STANDARD_VARARGS
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#define NK_IMPLEMENTATION   
+#define NK_SDL_RENDERER_IMPLEMENTATION
+#include "nuklear.h"
+#include "nuklear_sdl_renderer.h"   
 #include"Chip8.h"
+
+struct nk_context *ctx;
 
 uint32_t screen[SCREEN_WIDTH * SCREEN_HEIGHT];
 unsigned char beepBuffer[735];
@@ -6,6 +20,7 @@ unsigned char beepBuffer[735];
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+SDL_Texture* emu_texture = NULL;
 
  SDL_Scancode keymappings[16] = {
     SDL_SCANCODE_X, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3,
@@ -21,52 +36,101 @@ SDL_AudioSpec want, have;
 //Handles keypresses
 void handle_keypress() {
     SDL_Event event;
-
-    if (SDL_PollEvent(&event)) {
-        const Uint8* state = SDL_GetKeyboardState(NULL);
-
+    nk_input_begin(ctx);
+    
+    while (SDL_PollEvent(&event)) {
+        //passing it through the Nuklear event handler before manually handling it
+        //if (nk_sdl_handle_event(&event)) continue;
+        
         switch (event.type) {
             case SDL_QUIT:
                 quit_flag = 1;
                 break;
-            default:
-                if (state[SDL_SCANCODE_ESCAPE]) {
-                    quit_flag = 1;
-                }
-
-                for (int i= 0;i < 16; i++) {
-                    curr_key_state[i] = state[keymappings[i]];
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                if (!nk_item_is_any_active(ctx)) {
+                    if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                        quit_flag = 1;
+                    }
+                    const Uint8* state = SDL_GetKeyboardState(NULL);
+                    for (int i = 0; i < 16; i++) {
+                        curr_key_state[i] = state[keymappings[i]];
+                    }
                 }
                 break;
         }
     }
+    nk_input_end(ctx);
 }
 
 //initializes the screen
 void initializeScreen() {
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 64*8, 32*8, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    
+    emu_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
+        SDL_TEXTUREACCESS_TARGET, 
+        SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    ctx = nk_sdl_init(window, renderer);
+    struct nk_font_atlas *atlas;
+    nk_sdl_font_stash_begin(&atlas);
+    nk_sdl_font_stash_end();
+
+    SDL_SetTextureBlendMode(emu_texture, SDL_BLENDMODE_NONE);
     memset(screen, 0, sizeof(screen));
 }
 
-//draws it
-void drawScreen() {
+//updates the emulator output as a texture
+void update_chip8_texture() {
+    SDL_SetRenderTarget(renderer, emu_texture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255 );
-
+    
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     for (int y = 0; y < SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < SCREEN_WIDTH; ++x) {
             if (screen[y * SCREEN_WIDTH + x]) {
-                SDL_Rect pixel = { x * 8, y * 8, 8, 8 };
+                SDL_Rect pixel = {x, y, 1, 1};
                 SDL_RenderFillRect(renderer, &pixel);
             }
         }
     }
+    SDL_SetRenderTarget(renderer, NULL);
+}
 
+//draws it
+void drawScreen() {
+    //updates the SDL2 texture whenever called 
+    update_chip8_texture();
+    
+    SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255); //I want this to be changeable later
+    SDL_RenderClear(renderer);
+    
+    if (nk_begin(ctx, "CHIP-8", nk_rect(20, 20, 64*8 + 20, 32*8 + 40), //Could just Print the filename here
+        NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_TITLE)) {
+        
+        nk_layout_row_dynamic(ctx, 32*8, 1);
+        nk_image(ctx, nk_image_ptr(emu_texture));
+    }
+    nk_end(ctx);
+    
+    if (nk_begin(ctx, "Controls", nk_rect(550, 20, 200, 150),
+        NK_WINDOW_BORDER|NK_WINDOW_TITLE)) {
+        
+        nk_layout_row_static(ctx, 30, 180, 1);
+        if (nk_button_label(ctx, "Quit")) {
+            quit_flag = 1;
+        }
+        
+        nk_layout_row_dynamic(ctx, 20, 1);
+        nk_property_int(ctx, "CPU Speed", 500, &CPU_HZ, 2000, 10, 1);
+    }
+    nk_end(ctx);
+    
+    nk_sdl_render(NK_ANTI_ALIASING_ON);
     SDL_RenderPresent(renderer);
 }
 
@@ -108,6 +172,8 @@ void stopBeep() {
 
 //stop the emu
 void endScreen(){
+    if (emu_texture) SDL_DestroyTexture(emu_texture);
+    nk_sdl_shutdown();
     SDL_DestroyRenderer(renderer);
     SDL_CloseAudioDevice(audioDevice);
     SDL_DestroyWindow(window);

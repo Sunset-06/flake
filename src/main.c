@@ -70,10 +70,10 @@ int main(int argc, char** argv) {
             if (soundTimer == 0) {
                 stopBeep();
             }
-            else{
+            else {
                 beep();
             }
-
+    
             timerAccumulated -= timerInterval;
         }
 
