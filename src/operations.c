@@ -1,4 +1,4 @@
-#include"Chip8.h"
+#include"../include/Chip8.h"
 #include<time.h>
 
 //helper function to provide a random byte, specifically for the 0xCXNN instruction

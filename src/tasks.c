@@ -8,9 +8,11 @@
 #define NK_INCLUDE_DEFAULT_FONT
 #define NK_IMPLEMENTATION   
 #define NK_SDL_RENDERER_IMPLEMENTATION
-#include "nuklear.h"
-#include "nuklear_sdl_renderer.h"   
-#include"Chip8.h"
+#include "../include/nuklear.h"
+#include "../include/nuklear_sdl_renderer.h"   
+#include"../include/Chip8.h"
+#define TINYFD_NOLIB
+#include "../include/tinyfiledialogs.c"
 
 struct nk_context *ctx;
 
@@ -38,28 +40,22 @@ void handle_keypress() {
     SDL_Event event;
     nk_input_begin(ctx);
     
+    // Separate input handling for the UI
     while (SDL_PollEvent(&event)) {
-        //passing it through the Nuklear event handler before manually handling it
-        //if (nk_sdl_handle_event(&event)) continue;
-        
-        switch (event.type) {
-            case SDL_QUIT:
-                quit_flag = 1;
-                break;
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-                if (!nk_item_is_any_active(ctx)) {
-                    if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-                        quit_flag = 1;
-                    }
-                    const Uint8* state = SDL_GetKeyboardState(NULL);
-                    for (int i = 0; i < 16; i++) {
-                        curr_key_state[i] = state[keymappings[i]];
-                    }
-                }
-                break;
+        if (event.type == SDL_QUIT) {
+            quit_flag = 1;
+        }
+        nk_sdl_handle_event(&event);
+    }
+    
+    // Separated keyboard handling for the emulator 
+    if (!pause_flag) {
+        const Uint8* state = SDL_GetKeyboardState(NULL);
+        for (int i = 0; i < 16; i++) {
+            curr_key_state[i] = state[keymappings[i]];
         }
     }
+    
     nk_input_end(ctx);
 }
 
@@ -101,7 +97,7 @@ void update_chip8_texture() {
     SDL_SetRenderTarget(renderer, NULL);
 }
 
-//draws it
+//draws the UI  <--- This is the main function for the UI
 void drawScreen() {
     //updates the SDL2 texture whenever called 
     update_chip8_texture();
@@ -109,24 +105,42 @@ void drawScreen() {
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255); //I want this to be changeable later
     SDL_RenderClear(renderer);
     
-    if (nk_begin(ctx, "CHIP-8", nk_rect(20, 20, 64*8 + 20, 32*8 + 40), //Could just Print the filename here
+    int windowWidth, windowHeight;
+    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    
+    int emu_texture_width = 64 * 8;  // 64 pixels * 8 scale
+    int emu_texture_height = 32 * 8; // 32 pixels * 8 scale
+    int chip8X = (windowWidth - emu_texture_width) / 2;
+    int chip8Y = (windowHeight - emu_texture_height) / 2;
+
+    if (nk_begin(ctx, "CHIP-8", nk_rect(chip8X, chip8Y, emu_texture_width + 20, emu_texture_height + 40),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_TITLE)) {
-        
-        nk_layout_row_dynamic(ctx, 32*8, 1);
+        nk_layout_row_dynamic(ctx, emu_texture_height, 1);
         nk_image(ctx, nk_image_ptr(emu_texture));
     }
+
     nk_end(ctx);
     
-    if (nk_begin(ctx, "Controls", nk_rect(550, 20, 200, 150),
-        NK_WINDOW_BORDER|NK_WINDOW_TITLE)) {
+    if (nk_begin(ctx, "Controls", nk_rect(20, 20, windowWidth - 40, 60),
+    NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_NO_SCROLLBAR)) {
         
-        nk_layout_row_static(ctx, 30, 180, 1);
+        // Horizontal layout with 3 equal buttons
+        nk_layout_row_static(ctx, 30, (windowWidth - 80) / 3, 3);
+        
+        // Pause button
+        if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
+            pause_flag = !pause_flag;
+        }
+        
+        // Load button
+        if (nk_button_label(ctx, "Load ROM")) {
+            openFilePicker();
+        }
+        
+        // Quit button
         if (nk_button_label(ctx, "Quit")) {
             quit_flag = 1;
         }
-        
-        nk_layout_row_dynamic(ctx, 20, 1);
-        nk_property_int(ctx, "CPU Speed", 500, &CPU_HZ, 2000, 10, 1);
     }
     nk_end(ctx);
     
@@ -206,6 +220,42 @@ void LoadRom(char filename[]){
     }
 
     fclose(file);
+}
+
+//resets emulator - for loading a new rom
+void resetEmulator() {
+    pc = START_ADDRESS;
+    I = 0;
+    memset(registers, 0, sizeof(registers));
+    memset(stack, 0, sizeof(stack));
+    sp = 0;
+    memset(memory + START_ADDRESS, 0, sizeof(memory) - START_ADDRESS);
+    memset(screen, 0, sizeof(screen));
+    delayTimer = 0;
+    soundTimer = 0;
+    cpuAccumulated = 0.0f;
+    timerAccumulated = 0.0f;
+    stopBeep();
+}
+
+// Opens the file picker dialog
+void openFilePicker() {
+    pause_flag=1;
+    const char *filterPatterns[] = {"*.ch8", "*.c8"};
+    const char *selectedFile = tinyfd_openFileDialog(
+        "Open a ROM",    
+        "",                   
+        2,                    
+        filterPatterns,       
+        "CHIP-8 ROMs",        
+        0                    
+    );
+    //reset the emu
+    if (selectedFile){
+        resetEmulator();
+        LoadRom(selectedFile);
+        pause_flag=0;
+    }
 }
 
 //get opcode and increment pc

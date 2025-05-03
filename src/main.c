@@ -1,4 +1,4 @@
-#include"Chip8.h"
+#include"../include/Chip8.h"
 
 uint8_t memory[4096]={0};
 uint16_t pc = START_ADDRESS;
@@ -29,6 +29,9 @@ uint8_t delayTimer;
 uint8_t soundTimer;  
 uint16_t opcode;
 uint8_t quit_flag=0;
+uint8_t pause_flag=0;
+float cpuAccumulated = 0.0f;
+float timerAccumulated = 0.0f;
 int CPU_HZ = 950; // !!! Change later - need to make this variable from UI
 
 int main(int argc, char** argv) {
@@ -40,58 +43,59 @@ int main(int argc, char** argv) {
     initializeSound();
     char* inputRom = argv[1];
     LoadRom(inputRom);
-    // counters for cpu and timers
+    // counters for cpu and timers  
     uint32_t lastCpuTicks = SDL_GetTicks();
-    float cpuAccumulated = 0.0f;
-    float timerAccumulated = 0.0f;
     const float timerInterval = 1000.0f / 60.0f; // Timers locked to 60
 
     //main loop
     while(!quit_flag){
-        
-        // handling timers
-        uint32_t currentTicks = SDL_GetTicks();
-        uint32_t deltaTicks = currentTicks - lastCpuTicks;
-        lastCpuTicks = currentTicks;
-
-
-        cpuAccumulated += deltaTicks;
-        timerAccumulated += deltaTicks;
-
-
-        while(timerAccumulated >= timerInterval) { 
-            if (delayTimer > 0) {
-                --delayTimer;
-            }
-            if (soundTimer > 0) {
-                --soundTimer;
-            }
-
-            if (soundTimer == 0) {
-                stopBeep();
-            }
-            else {
-                beep();
-            }
-    
-            timerAccumulated -= timerInterval;
-        }
-
         // handling inputs
         handle_keypress();
-
-        /*I'm keeping this inside the loop to allow 
-        the player to change it dynamically whenever they want
-        Maybe a slider when get around to adding a UI */
-        float intervalPerCycle = 1000.0f / CPU_HZ; 
-        
-        //executing the instructions
-        while(cpuAccumulated >= intervalPerCycle) {    
-            execute();
-            cpuAccumulated -= intervalPerCycle;
-        }
-
         drawScreen();
+
+        //Checks if the emu is paused every loop
+        if(!pause_flag){
+            // handling timers
+            uint32_t currentTicks = SDL_GetTicks();
+            uint32_t deltaTicks = currentTicks - lastCpuTicks;
+            lastCpuTicks = currentTicks;
+
+            cpuAccumulated += deltaTicks;
+            timerAccumulated += deltaTicks;
+
+            while(timerAccumulated >= timerInterval) { 
+                if (delayTimer > 0) {
+                    --delayTimer;
+                }
+                if (soundTimer > 0) {
+                    --soundTimer;
+                }
+
+                if (soundTimer == 0) {
+                    stopBeep();
+                }
+                else {
+                    beep();
+                }
+        
+                timerAccumulated -= timerInterval;
+            }
+
+            /*I'm keeping this inside the loop to allow 
+            the player to change it dynamically whenever they want
+            Maybe a slider when get around to adding a UI */
+            float intervalPerCycle = 1000.0f / CPU_HZ; 
+            
+            //executing the instructions
+            while(cpuAccumulated >= intervalPerCycle) {    
+                execute();
+                cpuAccumulated -= intervalPerCycle;
+            }
+        }
+        else {
+            // Pause for 16ms to prevent infinite loop 
+            SDL_Delay(16);  
+        }
     }
 
     endScreen();
