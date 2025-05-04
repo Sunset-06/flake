@@ -1,5 +1,6 @@
 #include"../include/Chip8.h"
 
+//All globals are here
 uint8_t memory[4096]={0};
 uint16_t pc = START_ADDRESS;
 uint16_t I = 0;
@@ -24,16 +25,28 @@ unsigned char fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
-uint8_t curr_key_state[16]= {0};
-uint8_t delayTimer;
-uint8_t soundTimer;  
-uint16_t opcode;
-uint8_t quit_flag=0;
-uint8_t pause_flag=0;
-float cpuAccumulated = 0.0f;
-float timerAccumulated = 0.0f;
 int CPU_HZ = 950; // !!! Change later - need to make this variable from UI
 
+
+uint32_t screen[SCREEN_WIDTH * SCREEN_HEIGHT];
+unsigned char beepBuffer[735];
+uint8_t delayTimer;
+uint8_t soundTimer;
+float cpuAccumulated = 0.0f;
+float timerAccumulated = 0.0f;
+uint16_t opcode;
+SDL_Scancode keymappings[16] = {
+    SDL_SCANCODE_X, SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3,
+    SDL_SCANCODE_Q, SDL_SCANCODE_W, SDL_SCANCODE_E, SDL_SCANCODE_A,
+    SDL_SCANCODE_S, SDL_SCANCODE_D, SDL_SCANCODE_Z, SDL_SCANCODE_C,
+    SDL_SCANCODE_4, SDL_SCANCODE_R, SDL_SCANCODE_F, SDL_SCANCODE_V
+};
+uint8_t curr_key_state[16]= {0};  
+uint8_t quit_flag=0;
+uint8_t pause_flag=0;
+
+
+/* ----------------> TODO: Fix the ROM Loading Timing <--------------*/
 int main(int argc, char** argv) {
     if (argc != 2) {
         printf("Wrong command! Use it as:\n flake rom_file.ch8");

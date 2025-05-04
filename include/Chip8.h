@@ -20,7 +20,7 @@ extern uint8_t sp;
 extern uint8_t fontset[FONTSET_SIZE];
 extern int CPU_HZ;
 
-extern uint32_t screen[64 * 32];
+extern uint32_t screen[64 * 32];    
 extern uint8_t beepBuffer[735];
 extern uint8_t delayTimer;
 extern uint8_t soundTimer;
@@ -41,7 +41,7 @@ void handle_keypress();
 void beep();
 void stopBeep();
 //emulator functions
-void LoadRom(char filename[]);
+void LoadRom(const char* filename);
 void execute();
 void run_operation();
 //tiny file dialogs
