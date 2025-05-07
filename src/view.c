@@ -49,7 +49,7 @@ void handle_keypress() {
 //initializes the screen
 void initializeScreen() {
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
@@ -100,7 +100,7 @@ void drawScreen() {
     int emu_texture_width = 64 * 8;  
     int emu_texture_height = 32 * 8; 
     int chip8X = (windowWidth - emu_texture_width) / 2;
-    int chip8Y = (windowHeight - emu_texture_height) / 2;
+    int chip8Y = (windowHeight - emu_texture_height) / 6;
 
     if (nk_begin(ctx, "CHIP-8", nk_rect(chip8X, chip8Y, emu_texture_width + 20, emu_texture_height + 40),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_TITLE)) {
@@ -110,11 +110,11 @@ void drawScreen() {
 
     nk_end(ctx);
     
-    if (nk_begin(ctx, "Controls", nk_rect(20, 20, windowWidth - 40, 60),
+    if (nk_begin(ctx, "", nk_rect(20, 350, windowWidth - 40, 60),
     NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_NO_SCROLLBAR)) {
         
         // Horizontal layout with 3 equal buttons
-        nk_layout_row_static(ctx, 30, (windowWidth - 80) / 3, 3);
+        nk_layout_row_static(ctx, 30, (windowWidth - 80) / 5, 3);
         
         // Pause button
         if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
