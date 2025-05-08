@@ -3,6 +3,7 @@
 #define THEME_H
 
 #include <SDL2/SDL.h>
+
 typedef struct {
     struct nk_color background;
     struct nk_color primary;

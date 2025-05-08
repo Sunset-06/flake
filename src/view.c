@@ -1,16 +1,9 @@
-#define NK_INCLUDE_FIXED_TYPES
-#define NK_INCLUDE_STANDARD_IO
-#define NK_INCLUDE_STANDARD_VARARGS
-#define NK_INCLUDE_DEFAULT_ALLOCATOR
-#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-#define NK_INCLUDE_FONT_BAKING
-#define NK_INCLUDE_DEFAULT_FONT
-#define NK_IMPLEMENTATION   
+#define NK_IMPLEMENTATION
 #define NK_SDL_RENDERER_IMPLEMENTATION
-#include "../include/nuklear.h"
-#include "../include/nuklear_sdl_renderer.h"   
-#include"../include/Chip8.h"
+#include"../include/nuklear_config.h"
 
+#include"../include/Chip8.h"
+#include"../include/theme.h"
 struct nk_context *ctx;
 
 SDL_Window* window = NULL;
@@ -88,51 +81,49 @@ void update_chip8_texture() {
 
 //draws the UI  <--- This is the main function for the UI
 void drawScreen() {
-    //updates the SDL2 texture whenever called 
     update_chip8_texture();
-    
-    SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255); //I want this to be changeable later
+    //setup_purple_theme(ctx);
+
+    // Set screen background to match theme
+    SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
     SDL_RenderClear(renderer);
-    
+
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-    
-    int emu_texture_width = 64 * 8;  
-    int emu_texture_height = 32 * 8; 
+
+    int emu_texture_width = 64 * 10;
+    int emu_texture_height = 32 * 10;
     int chip8X = (windowWidth - emu_texture_width) / 2;
     int chip8Y = (windowHeight - emu_texture_height) / 6;
 
-    if (nk_begin(ctx, "CHIP-8", nk_rect(chip8X, chip8Y, emu_texture_width + 20, emu_texture_height + 40),
-        NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_TITLE)) {
-        nk_layout_row_dynamic(ctx, emu_texture_height-20, 1);
+    int total_window_width = emu_texture_width + 40;
+    int total_window_height = emu_texture_height + 120;
+
+    if (nk_begin(ctx, "CHIP-8", nk_rect(chip8X, chip8Y, total_window_width, total_window_height),
+                 NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_TITLE)) {
+        // Control buttons row
+        nk_layout_row_dynamic(ctx, 30, 3);
+
+        if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
+            pause_flag = !pause_flag;
+        }
+
+        if (nk_button_label(ctx, "Load ROM")) {
+            openFilePicker();
+        }
+
+        if (nk_button_label(ctx, "Quit")) {
+            quit_flag = 1;
+        }
+
+        nk_spacing(ctx, 1); // Add some vertical space
+
+        // Emulator texture
+        nk_layout_row_dynamic(ctx, emu_texture_height, 1);
         nk_image(ctx, nk_image_ptr(emu_texture));
     }
 
     nk_end(ctx);
-    
-    if (nk_begin(ctx, "", nk_rect(20, 350, windowWidth - 40, 60),
-    NK_WINDOW_BORDER|NK_WINDOW_TITLE|NK_WINDOW_NO_SCROLLBAR)) {
-        
-        // Horizontal layout with 3 equal buttons
-        nk_layout_row_static(ctx, 30, (windowWidth - 80) / 5, 3);
-        
-        // Pause button
-        if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
-            pause_flag = !pause_flag;
-        }
-        
-        // Load button
-        if (nk_button_label(ctx, "Load ROM")) {
-            openFilePicker();
-        }
-        
-        // Quit button
-        if (nk_button_label(ctx, "Quit")) {
-            quit_flag = 1;
-        }
-    }
-    nk_end(ctx);
-    
     nk_sdl_render(NK_ANTI_ALIASING_ON);
     SDL_RenderPresent(renderer);
 }

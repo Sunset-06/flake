@@ -49,7 +49,7 @@ uint8_t pause_flag=0;
 /* ----------------> TODO: Fix the ROM Loading Timing <--------------*/
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Wrong command! Use it as:\n flake rom_file.ch8");
+        printf("Wrong command! Use it as:\n flake rom_file.ch8\n");
         return 1;
     }
     initializeScreen();
