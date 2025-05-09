@@ -28,25 +28,35 @@ For Example:
 ```bash
   make #To compile
 
-  ./flake path/to/your/rom.ch8 #To execute
+  ./flake  #To start without preloading a rom
+  ./flake path/to/your/rom.ch8 #Alternatively, start with a rom
 ```
 
-Currently the CPU speed is fixed to 950 Hz. In case this does not behave well with the rom you want to run, You need to change this to your desired frequency and recompile.
+The CPU runs at 950Hz by default. Adjust this based on your game using the slider, until the game runs well.
 
-```C
-// in main.c at line 32
-int CPU_HZ = 950;
-```
-950 works for most modern games, but older games might have trouble running this. For example, this was too fast for Pong.
+### Controls
 
-## Work left
+The Chip8 keypad is mapped to the keyboard like this:  
 
-This project is fully functioning! Everything works now!
-The previous commits had me adding a variable for CPU frequency and functions for sound. 
+<table>
+<tr><th>Chip8 Keypad </th><th>Keyboard Mapping</th></tr>
+<tr><td>
 
-Now that the emulator is done, I want to make a UI to allow people to load roms, change colours and maybe even change what waveform plays when the sound timers are on (currently it plays a square wave).
+| 1 | 2 | 3 | C |
+|--|--|--|--|
+| 4 | 5 | 6 | D |
+| 7 | 8 | 9 | E |
+| A | 0 | B | F |
 
-I'm not sure when this will be done, or what I would be using to implement it, but it definitely is being worked on. Until then, you will have to use a cli to run roms.
+</td><td>
+
+| 1 | 2 | 3 | 4 |
+|--|--|--|--|
+| Q | W | D | R |
+| A | S | D | F |
+| Z | X | C | V |
+
+</td></tr> </table>
 
 ## Credits
 

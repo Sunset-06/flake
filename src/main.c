@@ -25,7 +25,7 @@ unsigned char fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
-int CPU_HZ = 950; // !!! Change later - need to make this variable from UI
+int CPU_HZ = 950; 
 
 
 uint32_t screen[SCREEN_WIDTH * SCREEN_HEIGHT];
@@ -54,8 +54,10 @@ int main(int argc, char** argv) {
     } */
     initializeScreen();
     initializeSound();
-    //char* inputRom = argv[1];
-    //LoadRom(inputRom);
+    if(argv[1]){
+        char* inputRom = argv[1];
+        LoadRom(inputRom);
+    }
     // counters for cpu and timers  
     uint32_t lastCpuTicks = SDL_GetTicks();
     const float timerInterval = 1000.0f / 60.0f; // Timers locked to 60
