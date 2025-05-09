@@ -42,7 +42,7 @@ void handle_keypress() {
 //initializes the screen
 void initializeScreen() {
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("flake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 700, SDL_WINDOW_SHOWN);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     
@@ -82,7 +82,7 @@ void update_chip8_texture() {
 //draws the UI  <--- This is the main function for the UI
 void drawScreen() {
     update_chip8_texture();
-    //setup_purple_theme(ctx);
+    setup_purple_theme(ctx);
 
     // Set screen background to match theme
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
@@ -91,32 +91,44 @@ void drawScreen() {
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
-    int emu_texture_width = 64 * 10;
-    int emu_texture_height = 32 * 10;
+    int emu_texture_width = 64 * 12;
+    int emu_texture_height = 32 * 12;
     int chip8X = (windowWidth - emu_texture_width) / 2;
     int chip8Y = (windowHeight - emu_texture_height) / 6;
 
-    int total_window_width = emu_texture_width + 40;
-    int total_window_height = emu_texture_height + 120;
-
-    if (nk_begin(ctx, "CHIP-8", nk_rect(chip8X, chip8Y, total_window_width, total_window_height),
-                 NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_TITLE)) {
+    if (nk_begin(ctx, "CHIP-8", nk_rect(0, 0, windowWidth, windowHeight),
+                 NK_WINDOW_BORDER)) {
         // Control buttons row
         nk_layout_row_dynamic(ctx, 30, 3);
-
+        
+        //Pause button
         if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
             pause_flag = !pause_flag;
         }
 
+        //Load button
         if (nk_button_label(ctx, "Load ROM")) {
             openFilePicker();
         }
-
+        
+        //Quit button
         if (nk_button_label(ctx, "Quit")) {
             quit_flag = 1;
         }
 
-        nk_spacing(ctx, 1); // Add some vertical space
+        //Spacing before slider
+        nk_layout_row_dynamic(ctx, 10, 1);
+        nk_spacing(ctx, 1);
+
+        // Slider for CPU speed
+        nk_layout_row_dynamic(ctx, 25, 1);
+        nk_label(ctx, "CPU Speed (Hz)", NK_TEXT_LEFT);
+
+        nk_layout_row_dynamic(ctx, 30, 1);
+        nk_slider_int(ctx, 100, &CPU_HZ, 2000, 50);
+        
+
+        nk_spacing(ctx, 1); 
 
         // Emulator texture
         nk_layout_row_dynamic(ctx, emu_texture_height, 1);

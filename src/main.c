@@ -48,14 +48,14 @@ uint8_t pause_flag=0;
 
 /* ----------------> TODO: Fix the ROM Loading Timing <--------------*/
 int main(int argc, char** argv) {
-    if (argc != 2) {
+    /* if (argc != 2) {
         printf("Wrong command! Use it as:\n flake rom_file.ch8\n");
         return 1;
-    }
+    } */
     initializeScreen();
     initializeSound();
-    char* inputRom = argv[1];
-    LoadRom(inputRom);
+    //char* inputRom = argv[1];
+    //LoadRom(inputRom);
     // counters for cpu and timers  
     uint32_t lastCpuTicks = SDL_GetTicks();
     const float timerInterval = 1000.0f / 60.0f; // Timers locked to 60
