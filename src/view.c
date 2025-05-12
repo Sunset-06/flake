@@ -102,7 +102,8 @@ void drawScreen() {
         nk_layout_row_dynamic(ctx, 30, 3);
         
         //Pause button
-        if (nk_button_label(ctx, pause_flag ? "Resume" : "Pause")) {
+        //if (nk_button_label(ctx, pause_flag ? "\u25B6 Resume" : "	\u23F8 Pause")) { // WHy does unicode not work??
+        if(nk_button_label(ctx, pause_flag ? "> Resume" : "|| Pause")){ 
             pause_flag = !pause_flag;
         }
 
@@ -130,6 +131,10 @@ void drawScreen() {
 
         nk_spacing(ctx, 1); 
 
+        // ROM name label
+        nk_layout_row_dynamic(ctx, 30, 1); 
+        nk_label(ctx, currentRom, NK_TEXT_LEFT);
+        
         // Emulator texture
         nk_layout_row_dynamic(ctx, emu_texture_height, 1);
         nk_image(ctx, nk_image_ptr(emu_texture));

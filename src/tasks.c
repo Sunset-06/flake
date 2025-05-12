@@ -2,6 +2,7 @@
 #define TINYFD_NOLIB
 #include "../include/tinyfiledialogs.c"
 
+char currentRom[256] = "No ROM Loaded";
 //load the rom file
 void LoadRom(const char* filename){
     FILE* file = fopen(filename, "rb");  
@@ -26,6 +27,21 @@ void LoadRom(const char* filename){
         fclose(file);
         exit(1);
     }
+
+    //Getting ROM name for the UI
+    const char *basename = strrchr(filename, '/');  
+    if (!basename) {
+        basename = strrchr(filename, '\\');   
+    }
+    if (basename) {
+        basename++;  
+    } else {
+        basename = filename; 
+    }
+
+    strncpy(currentRom, basename, 255);
+    currentRom[255] = '\0';  
+    
 
     fclose(file);
 }

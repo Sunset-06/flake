@@ -31,6 +31,7 @@ extern SDL_Scancode keymappings[16];
 extern uint8_t curr_key_state[16];
 extern uint8_t quit_flag;
 extern uint8_t pause_flag;
+extern char currentRom[256];
 
 //SDL functions
 void initializeScreen();
