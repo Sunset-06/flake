@@ -1,3 +1,4 @@
+![Banner](./public/github-banner.png)
 # flake
 
 Flake is a lightweight Chip 8 interpreter/emulator written in C. It supports all basic Chip-8 operations and uses SDL2 to draw the graphics.
