@@ -1,16 +1,21 @@
 # flake
 
-Flake is a lightweight Chip 8 interpreter/emulator written in C. It supports basic Chip-8 operations and uses SDL2 to draw the graphics.
+Flake is a lightweight Chip 8 interpreter/emulator written in C. It supports all basic Chip-8 operations and uses SDL2 to draw the graphics.
 
 I've worked on this purely to understand architecture, and while I try my hardest, it might not be the most readable code. This is the first C project and there might be a few deviations from standard practices, so I apologize for any hard-to-read code. Of course, feedback is welcome!
 
 ## How to get it to work
 
+You don't need to compile it on Debian-based linux distros anymore! Check the releases tab for the .deb file. Just download and install!
+
+For manual compilation, read on.
+
+## Compiling:
+
 ### Prerequisites:
 1. GCC
 2. SDL2
 
-### Compiling:
 (This was done in a linux environment originally, but these instructions should still work for windows as long as you have all the prerequisites.)
 
 First, Compile the four files in the src directory. Once done, You can either call without arguments, or pass the path to the rom as an argument.
@@ -22,22 +27,52 @@ You can compile manually, or use the provided makefile.
 Manual Compilation
 ```bash
   gcc -o flake src/main.c src/operations.c src/tasks.c src/view.c src/theme.c -lSDL2 -lm #To compile
-
-  ./flake # or
-  ./flake path/to/your/rom.ch8 # To execute
 ```
 **Alternatively, use the MakeFile provided to compile the project.**
 
 ```bash
   make # To compile
-
+```
+This will create the binary in the root directory. 
+To run the application:
+```bash
   ./flake  # To start without preloading a rom
   ./flake path/to/your/rom.ch8 # Alternatively, start with a rom
 ```
 
-**Note: The CPU runs at 950Hz by default. Adjust this based on your game using the slider, until the game runs well.**
+## Packaging
 
-### Controls
+To automatically package, just run
+```bash
+  make install
+```
+This will build the deb file in the `package/flake-amd64` directory. You can install from there.
+
+### For manual packaging
+The packaging directory is already setup and included in the `package/flake-amd64` directory. The important files are:
+
+```bash
+  /DEBIAN/control
+  /usr/bin/
+  /usr/share/applications/flake.desktop
+```
+The control and flake.desktop files contain information required for packaging. 
+
+**The /usr/bin directory should contain the output binary to build from.**
+
+All the icons are in the `hicolor/SIZExSIZE` directory, make a new folder for any icons with different sizes.
+
+Before packaging, ensure you have the compiled binary along with the files listed above. If you do not, use the instructions above to compile. Once done, run the following:
+
+```bash
+  dpkg-deb --build package/flake-amd64 # Change the path to your packaging dir
+```
+
+This will create a `.deb` file in the directory `package/flake-amd64`
+
+## Using the Emulator
+
+**Note: The CPU runs at 950Hz by default. Adjust this based on your game using the slider, until the game runs how you want it to.**
 
 The Chip8 keypad is mapped to the keyboard like this:  
 
