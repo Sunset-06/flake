@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Flake
+Comment=Chip-8 Emulator
+Exec=/usr/bin/flake
+Icon=flake
+Terminal=false
+Type=Application
+Categories=Games;
+

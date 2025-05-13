@@ -4,11 +4,11 @@
 static PurpleTheme colors;
 
 void setup_purple_theme(struct nk_context *ctx) {
-    colors.background = nk_rgba(18, 18, 28, 255);       // deeper dark background
-    colors.primary    = nk_rgba(138, 43, 226, 255);     // vibrant purple
-    colors.secondary  = nk_rgba(75, 0, 130, 255);       // indigo accent
-    colors.accent     = nk_rgba(186, 85, 211, 255);     // orchid (bright accent)
-    colors.text       = nk_rgba(230, 230, 250, 255);    // light lavender text
+    colors.background = nk_rgba(18, 18, 28, 255);       
+    colors.primary    = nk_rgba(138, 43, 226, 255);     
+    colors.secondary  = nk_rgba(75, 0, 130, 255);       
+    colors.accent     = nk_rgba(186, 85, 211, 255);     
+    colors.text       = nk_rgba(230, 230, 250, 255);    
 
     struct nk_style *s = &ctx->style;
 
@@ -21,10 +21,9 @@ void setup_purple_theme(struct nk_context *ctx) {
     s->button.rounding = 0.0f;
     struct nk_style_slider *slider = &ctx->style.slider;
 
-    // Simulated dotted background by using a contrasting color (you could draw a dotted texture manually if using custom drawing)
     slider->bar_normal = colors.background;
-    slider->bar_hover = nk_rgba(48, 0, 80, 255);  // A lighter purple for hover
-    slider->bar_active = nk_rgba(75, 0, 130, 255);  // More vibrant on active
+    slider->bar_hover = nk_rgba(48, 0, 80, 255);  
+    slider->bar_active = nk_rgba(75, 0, 130, 255);  
 
     slider->cursor_size = nk_vec2(18, 18);
     slider->cursor_normal = nk_style_item_color(colors.primary);

@@ -1,0 +1,10 @@
+Package: flake
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libsdl2-2.0-0
+Maintainer: Sunset-06
+Description: A lightweight Chip-8 emulator written in C. 
+ Visit the repo for more information: https://github.com/Sunset-06/flake
+

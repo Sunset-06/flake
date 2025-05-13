@@ -51,14 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-#unnecesarry directories
-.vscode/
+
+# Test Roms,Binary and package
 roms/
-# Test Roms and Binary
-flag_test.ch8
-ibm_test.ch8
-keypad_test.ch8
-logo_test.ch8
 flake
-opcode_test.ch8
-timer_test.ch8
+*.deb
